@@ -1,34 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('usuario')
+@ApiTags('usuarios')
+@Controller('usuarios')
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
   @Post()
-  create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuarioService.create(createUsuarioDto);
+  create(@Body() dto: CreateUsuarioDto) {
+    return this.usuarioService.create(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.usuarioService.findAll();
+@Get()
+async findAll() {
+  try {
+    return await this.usuarioService.findAll();
+  } catch (error) {
+    console.error(error); // muestra el error real en consola
+    throw error;
   }
-
+}
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usuarioService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.usuarioService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioService.update(+id, updateUsuarioDto);
+  update(@Param('id') id: number, @Body() dto: UpdateUsuarioDto) {
+    return this.usuarioService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usuarioService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.usuarioService.remove(id);
   }
 }
